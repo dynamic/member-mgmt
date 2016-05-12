@@ -1,0 +1,27 @@
+{
+    "name": "dynamic/member-mgmt",
+    "description": "Simple member registration module for SilverStripe",
+    "authors": [
+        {
+            "name": "Dynamic, Inc",
+            "email": "dev@dynamicagency.com"
+        }
+    ],
+    "keywords": [
+        "silverstripe", "module", "member", "registration", "dynamic"
+    ],
+    "type": "silverstripe-module",
+    "license": "BSD-3-Clause",
+    "require": {
+        "silverstripe/cms": "^3.2",
+        "silverstripe/framework": "^3.2",
+    },
+    "require-dev": {
+        "phpunit/PHPUnit": "^3.7"
+    },
+    "config": {
+        "process-timeout": 600
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
