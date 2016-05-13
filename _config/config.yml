@@ -1,3 +1,11 @@
 ---
 Name: membermgmtconfig
 ---
+Member:
+  extensions:
+    - DynamicMemberDataExtension
+Member:
+  max_profile_image_size: 512000
+  max_profile_image_size: .512
+Registration_Controller:
+  RegistrationTitle: 'Register for an account'
