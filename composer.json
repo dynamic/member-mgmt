@@ -25,6 +25,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "installer-name": "member-mgmt"
+        "installer-name": "member-mgmt",
+        "branch-alias": {
+            "1.0": "1.0.x-dev"
+        }
     }
 }
