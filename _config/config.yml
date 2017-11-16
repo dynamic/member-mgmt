@@ -1,10 +1,10 @@
 ---
 Name: membermgmtconfig
 ---
-Member:
+SilverStripe\Security\Member:
   extensions:
-    - DynamicMemberDataExtension
+    - Dynamic\Members\ORM\DynamicMemberDataExtension
   max_profile_image_size: 512000
   max_profile_image_size: .512
-Registration_Controller:
+Dynamic\Members\Controller\Registration_Controller:
   RegistrationTitle: 'Register for an account'

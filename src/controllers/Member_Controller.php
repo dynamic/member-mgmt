@@ -1,9 +1,11 @@
 <?php
 
+namespace Dynamic\Members\Controller;
+
 /**
  * Class Member_Controller
  */
-class Member_Controller extends Page_Controller
+class Member_Controller extends \PageController
 {
     /**
      * @var array

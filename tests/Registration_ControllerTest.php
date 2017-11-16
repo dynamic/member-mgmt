@@ -1,5 +1,9 @@
 <?php
 
+namespace Dynamic\Members\Test;
+
+use SilverStripe\Dev\SapphireTest;
+
 class Registration_ControllerTest extends SapphireTest
 {
     public function testIndex()

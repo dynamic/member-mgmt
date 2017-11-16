@@ -1,9 +1,16 @@
 <?php
 
+namespace Dynamic\Members\Form;
+
+use SilverStripe\Control\Controller;
+use SilverStripe\Dev\Debug;
+use SilverStripe\Forms\Form;
+use SilverStripe\Security\Member;
+
 /**
  * Class RegistrationForm
  */
-class RegistrationForm extends BootstrapForm
+class RegistrationForm extends Form
 {
 
     /**
@@ -14,11 +21,12 @@ class RegistrationForm extends BootstrapForm
     public function __construct(Controller $controller, $name)
     {
 
-        $member = singleton('Member');
+        $member = Member::singleton();
 
         $fields = $member->getMemberFields();
-        $this->extend('updateVenuRegistrationFormFields', $fields);
-        $fields->bootstrapIgnore('ProfilePictureID');
+
+        //$this->extend('updateVenuRegistrationFormFields', $fields);
+        //$fields->bootstrapIgnore('ProfilePictureID');
 
         $actions = $member->getMemberActions();
         $this->extend('updateVenuRegistrationFormActions', $actions);

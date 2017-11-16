@@ -1,5 +1,9 @@
 <?php
 
+namespace Dynamic\Members\Test;
+
+use SilverStripe\Dev\SapphireTest;
+
 class DynamicMemberDataExtensionTest extends SapphireTest
 {
     public function testGetMemberFields()

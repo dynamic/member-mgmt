@@ -1,0 +1,8 @@
+---
+Name: membermgmtroutes
+After: framework/routes#coreroutes
+---
+SilverStripe\Control\Director:
+  rules:
+    'Registration_Controller//$Action/$ID/$Name': 'Dynamic\Members\Controller\Registration_Controller'
+    'register//$Action/$ID/$Name': 'Dynamic\Members\Controller\Registration_Controller'

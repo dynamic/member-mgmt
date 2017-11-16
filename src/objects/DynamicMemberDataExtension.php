@@ -1,5 +1,20 @@
 <?php
 
+namespace Dynamic\Members\ORM;
+
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\ConfirmedPasswordField;
+use SilverStripe\Forms\EmailField;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\TextField;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\Security\Group;
+
 /**
  * Class VenuMember
  */
@@ -17,7 +32,7 @@ class DynamicMemberDataExtension extends DataExtension
      * @var array
      */
     private static $has_one = array(
-        'ProfilePicture' => 'Image',
+        'ProfilePicture' => Image::class,
     );
 
     /**
@@ -36,13 +51,14 @@ class DynamicMemberDataExtension extends DataExtension
     public function getMemberFields()
     {
 
-        $image = FileAttachmentField::create('ProfilePictureID', 'Profile Picture')
-            ->setAcceptedFiles(array('.gif', '.jpg', '.jpeg', '.png'))
-            ->setView('grid')
-            ->setMultiple(false)
-            ->setAutoProcessQueue(true)
+        $image = UploadField::create('ProfilePictureID', 'Profile Picture')
+            //->setAcceptedFiles(array('.gif', '.jpg', '.jpeg', '.png'))
+            //->setView('grid')
+            //->setMultiple(false)
+            //->setAutoProcessQueue(true)
             ->setFolderName('Uploads/Profile-Pictures')
-            ->setMaxFilesize($this->getMaxProfileImageSize());
+            //->setMaxFilesize($this->getMaxProfileImageSize());
+        ;
 
         $fields = FieldList::create(
             TextField::create('FirstName')
@@ -53,12 +69,12 @@ class DynamicMemberDataExtension extends DataExtension
                 ->setTitle('Make my profile public'),
             EmailField::create('Email')
                 ->setTitle('Email'),
-            ConfirmedPasswordField::create('Password')
-                ->setTitle(''),
+            ConfirmedPasswordField::create('Password'),
+                //->setTitle('')
             $image
         );
 
-        $this->owner->extend("updateMemberFields", $fields);
+        //$this->owner->extend("updateMemberFields", $fields);
 
         return $fields;
     }

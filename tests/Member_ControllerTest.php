@@ -1,5 +1,9 @@
 <?php
 
+namespace Dynamic\Members\Test;
+
+use SilverStripe\Dev\SapphireTest;
+
 class Member_ControllerTest extends SapphireTest
 {
     public function testGetProfile()

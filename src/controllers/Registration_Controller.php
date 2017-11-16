@@ -1,5 +1,17 @@
 <?php
 
+namespace Dynamic\Members\Controller;
+
+use Dynamic\Members\Form\RegistrationForm;
+use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\Security\Group;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
+
 /**
  * Class Registration_Controller
  */
@@ -23,12 +35,12 @@ class Registration_Controller extends ContentController
     );
 
     /**
-     * @param SS_HTTPRequest $request
-     * @return HTMLText
+     * @param HTTPRequest $request
+     * @return DBHTMLText
      */
-    public function index(SS_HTTPRequest $request)
+    public function index(HTTPRequest $request)
     {
-        if (!Member::currentUser()) {
+        if (!Security::getCurrentUser()) {
             $content = DBField::create_field('HTMLText', '<p>Create a profile on Venu365.</p>');
 
             return $this->renderWith(
@@ -63,7 +75,7 @@ class Registration_Controller extends ContentController
     /**
      * @param RegistrationForm $form
      * @param $data
-     * @return SS_HTTPResponse|void
+     * @return HTTPResponse|void
      */
     public function processmember($data, RegistrationForm $form)
     {
