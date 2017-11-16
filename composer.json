@@ -1,6 +1,6 @@
 {
-    "name": "dynamic/member-mgmt",
-    "description": "Simple member registration module for SilverStripe",
+    "name": "dynamic/silverstripe-member-profiles",
+    "description": "Simple member registration and profiles for SilverStripe",
     "authors": [
         {
             "name": "Dynamic, Inc",
@@ -8,12 +8,13 @@
         }
     ],
     "keywords": [
-        "silverstripe", "module", "member", "registration", "dynamic"
+        "silverstripe", "profile", "module", "member", "registration", "dynamic"
     ],
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "license": "BSD-3-Clause",
     "require": {
-        "silverstripe/recipe-cms": "^1.0"
+        "silverstripe/recipe-cms": "^1.0",
+        "silverstripe/vendor-plugin": "^1.0"
     },
     "require-dev": {
         "phpunit/PHPUnit": "^5.7",
@@ -31,7 +32,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
-        "installer-name": "member-mgmt",
+        "installer-name": "member-profiles",
         "branch-alias": {
             "dev-master": "2.0.x-dev"
         }
