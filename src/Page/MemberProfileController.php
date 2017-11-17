@@ -139,7 +139,8 @@ class MemberProfileController extends \PageController
             $fields->insertBefore(
                 LiteralField::create(
                     'ProfileImgPrev',
-                    '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"' . $src . ' ></div>'
+                    '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"'
+                        . $src . ' ></div>'
                 ),
                 'ProfileImage'
             );
