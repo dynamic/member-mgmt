@@ -1,30 +1,17 @@
 <?php
 
-namespace Dynamic\Profiles\Controller;
+namespace Dynamic\Profiles\Page;
 
 use Dynamic\Profiles\Form\ProfileForm;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\ORM\FieldType\DBField;
+use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
-use SilverStripe\SpamProtection\Extension\FormSpamProtectionExtension;
-use SilverStripe\View\ViewableData_Customised;
 
-/**
- * Class Profile_Controller.
- */
-class ProfileController extends \PageController
+class MemberProfileController extends \PageController
 {
-    /**
-     * @var array
-     */
-    private static $url_handlers = array(
-        'profile/view/$ProfileID' => 'view',
-        'profile/update' => 'update',
-        'UpdateForm' => 'UpdateForm',
-        '' => 'index',
-    );
-
     /**
      * @var array
      */
@@ -32,7 +19,8 @@ class ProfileController extends \PageController
         'index',
         'view',
         'update',
-        'UpdateForm',
+        'register',
+        'ProfileForm',
     );
 
     /**
@@ -78,40 +66,24 @@ class ProfileController extends \PageController
 
     /**
      * @param HTTPRequest $request
-     * @return \SilverStripe\Control\HTTPResponse|\SilverStripe\ORM\FieldType\DBHTMLText
+     * @return $this|\SilverStripe\Control\HTTPResponse
      */
     public function index(HTTPRequest $request)
     {
-        if (!$this->getProfile()) {
-            if ($member = Security::getCurrentUser()) {
-                $this->setProfile($member);
-            }
+        if (!$member = Security::getCurrentUser()) {
+            return $this->redirect($this->Link() . 'register/');
+        } else {
+            return $this;
         }
-        if ($member = $this->getProfile()) {
-            return $this->renderWith(
-                array(
-                    'ProfilePage',
-                    'Page',
-                ),
-                array(
-                    'Title' => 'Your Profile',
-                    'Profile' => $member,
-                )
-            );
-        }
-        //ProfileErrorEmail::send_email(Member::currentUserID());
-        //todo determine proper error handling
-        return Security::permissionFailure($this, 'Please login to view your profile.');
     }
 
     /**
      * @param HTTPRequest $request
-     *
-     * @return ViewableData_Customised|void]
+     * @return \SilverStripe\ORM\FieldType\DBHTMLText
      */
     public function view(HTTPRequest $request)
     {
-        if (!$request->latestParam('ProfileID')) {
+        if (!$request->latestParam('ID')) {
             return $this->httpError(404);
         }
 
@@ -147,14 +119,13 @@ class ProfileController extends \PageController
             $this->setProfile(Security::getCurrentUser());
         }
         if ($member = $this->getProfile()) {
-            return $this->renderWith(
-                array(
-                    'ProfilePage_update',
-                    'Page',
-                ),
+            $form = $this->ProfileForm();
+            $fields = $form->Fields();
+            $fields->dataFieldByName('Password')->setCanBeEmpty(true);
+            return $this->customise(
                 array(
                     'Title' => 'Update your Profile',
-                    'Form' => $this->UpdateForm()->loadDataFrom($member),
+                    'Form' => $form->loadDataFrom($member),
                 )
             );
         }
@@ -164,18 +135,36 @@ class ProfileController extends \PageController
     }
 
     /**
+     * @param HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse|\SilverStripe\View\ViewableData_Customised
+     */
+    public function register(HTTPRequest $request)
+    {
+        if (!Security::getCurrentUser()) {
+            $content = DBField::create_field('HTMLText', '<p>Create a profile.</p>');
+
+            return $this->customise(
+                array(
+                    'Title' => 'Sign Up',
+                    'Content' => $content,
+                    'Form' => self::ProfileForm(),
+                )
+            );
+        }
+
+        return $this->redirect($this->Link());
+    }
+
+    /**
      * @return ProfileForm
      */
-    public function UpdateForm()
+    public function ProfileForm()
     {
         $form = ProfileForm::create($this, __FUNCTION__)
-            ->setFormAction(Controller::join_links('profile', __FUNCTION__))
-            ->setValidator(Member::singleton()->getUpdateRequiredFields());
-        if ($form->hasExtension(FormSpamProtectionExtension::class)) {
+            ->setFormAction(Controller::join_links($this->Link(), __FUNCTION__));
+        if ($form->hasExtension('FormSpamProtectionExtension')) {
             $form->enableSpamProtection();
         }
-        $fields = $form->Fields();
-        $fields->dataFieldByName('Password')->setCanBeEmpty(true);
 
         return $form;
     }
@@ -183,12 +172,25 @@ class ProfileController extends \PageController
     /**
      * @param $data
      * @param ProfileForm $form
+     * @return \SilverStripe\Control\HTTPResponse
      */
     public function processmember($data, ProfileForm $form)
     {
-        $member = Member::get()->byID($this->getProfile()->ID);
+        $member = Member::create();
         $form->saveInto($member);
-        $member->write();
-        $this->redirect('/profile');
+        $public = Group::get()
+            ->filter(array('Code' => 'public'))
+            ->first();
+        if ($member->write()) {
+            $groups = $member->Groups();
+            $groups->add($public);
+            $member->login();
+
+            return $this->redirect($this->Link());
+        }
+
+        //RegistrationErrorEmail::send_email(Member::currentUserID());
+        //todo figure out proper error handling
+        return $this->httpError(404);
     }
 }

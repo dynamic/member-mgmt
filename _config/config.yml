@@ -6,5 +6,3 @@ SilverStripe\Security\Member:
     - Dynamic\Profiles\ORM\ProfileMemberDataExtension
   max_profile_image_size: 512000
   max_profile_image_size: .512
-Dynamic\Profiles\Controller\RegistrationController:
-  RegistrationTitle: 'Register for an account'
