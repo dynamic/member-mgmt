@@ -137,8 +137,10 @@ class MemberProfileController extends \PageController
                 $src = '';
             }
             $fields->insertBefore(
-                LiteralField::create('ProfileImgPrev',
-                    '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"' . $src . ' ></div>'),
+                LiteralField::create(
+                    'ProfileImgPrev',
+                    '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"' . $src . ' ></div>'
+                ),
                 'ProfileImage'
             );
 
@@ -203,7 +205,6 @@ class MemberProfileController extends \PageController
         $existingProfileImage = $member->ProfileImage();
         $filter = FileNameFilter::create();
         if (isset($data['ProfileImage']) && !empty($data['ProfileImage']['name'])) {
-
             $newName = $filter->filter($data['ProfileImage']['name']);
             if ($existingProfileImage->exists() && $existingProfileImage->Name != $newName) {
                 $existingProfileImage->delete();
