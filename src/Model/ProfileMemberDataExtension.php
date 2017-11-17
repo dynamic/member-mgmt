@@ -1,6 +1,6 @@
 <?php
 
-namespace Dynamic\Members\ORM;
+namespace Dynamic\Profiles\ORM;
 
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
@@ -10,15 +10,16 @@ use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Group;
 
 /**
- * Class VenuMember.
+ * Class ProfileMemberDataExtension.
  */
-class DynamicMemberDataExtension extends DataExtension
+class ProfileMemberDataExtension extends DataExtension
 {
     /**
      * @var array
@@ -47,15 +48,10 @@ class DynamicMemberDataExtension extends DataExtension
     /**
      * @return FieldList
      */
-    public function getMemberFields()
+    public function getProfileFields()
     {
         $image = UploadField::create('ProfilePictureID', 'Profile Picture')
-            //->setAcceptedFiles(array('.gif', '.jpg', '.jpeg', '.png'))
-            //->setView('grid')
-            //->setMultiple(false)
-            //->setAutoProcessQueue(true)
             ->setFolderName('Uploads/Profile-Pictures')
-            //->setMaxFilesize($this->getMaxProfileImageSize());
         ;
 
         $fields = FieldList::create(
@@ -68,10 +64,14 @@ class DynamicMemberDataExtension extends DataExtension
             EmailField::create('Email')
                 ->setTitle('Email'),
             ConfirmedPasswordField::create('Password'),
+            LiteralField::create(
+                'ImagePreview',
+                '<p><img src="$ProfileImage.CMSThumbnail.URL"></p>'
+            ),
             $image
         );
 
-        //$this->owner->extend("updateMemberFields", $fields);
+        $this->owner->extend("updateProfileFields", $fields);
 
         return $fields;
     }
@@ -79,7 +79,7 @@ class DynamicMemberDataExtension extends DataExtension
     /**
      * @return FieldList
      */
-    public function getMemberActions()
+    public function getProfileActions()
     {
         return FieldList::create(
             FormAction::create('processmember')
@@ -90,7 +90,7 @@ class DynamicMemberDataExtension extends DataExtension
     /**
      * @return RequiredFields
      */
-    public function getRegistrationRequiredFields()
+    public function getProfileRequiredFields()
     {
         return RequiredFields::create(
             'FirstName',

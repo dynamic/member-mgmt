@@ -32,6 +32,9 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
+        "expose": [
+            "images"
+        ],
         "installer-name": "member-profiles",
         "branch-alias": {
             "dev-master": "2.0.x-dev"

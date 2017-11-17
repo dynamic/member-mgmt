@@ -1,8 +1,8 @@
 <?php
 
-namespace Dynamic\Members\Controller;
+namespace Dynamic\Profiles\Controller;
 
-use Dynamic\Members\Form\RegistrationForm;
+use Dynamic\Profiles\Form\ProfileForm;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
@@ -13,16 +13,16 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 /**
- * Class Registration_Controller.
+ * Class RegistrationController.
  */
-class Registration_Controller extends ContentController
+class RegistrationController extends ContentController
 {
     /**
      * @var array
      */
     private static $url_handlers = array(
         'register' => 'index',
-        'RegistrationForm' => 'RegistrationForm',
+        'ProfileForm' => 'ProfileForm',
     );
 
     /**
@@ -30,7 +30,7 @@ class Registration_Controller extends ContentController
      */
     private static $allowed_actions = array(
         'index',
-        'RegistrationForm',
+        'ProfileForm',
     );
 
     /**
@@ -41,7 +41,7 @@ class Registration_Controller extends ContentController
     public function index(HTTPRequest $request)
     {
         if (!Security::getCurrentUser()) {
-            $content = DBField::create_field('HTMLText', '<p>Create a profile on Venu365.</p>');
+            $content = DBField::create_field('HTMLText', '<p>Create a profile.</p>');
 
             return $this->renderWith(
                 array(
@@ -51,20 +51,20 @@ class Registration_Controller extends ContentController
                 array(
                     'Title' => 'Register',
                     'Content' => $content,
-                    'Form' => self::RegistrationForm(),
+                    'Form' => self::ProfileForm(),
                 )
             );
         }
 
-        return $this->redirect('/profile/update');
+        return $this->redirect('/profile/');
     }
 
     /**
-     * @return RegistrationForm
+     * @return ProfileForm
      */
-    public function RegistrationForm()
+    public function ProfileForm()
     {
-        $form = RegistrationForm::create($this, __FUNCTION__)
+        $form = ProfileForm::create($this, __FUNCTION__)
             ->setFormAction(Controller::join_links('register', __FUNCTION__));
         if ($form->hasExtension('FormSpamProtectionExtension')) {
             $form->enableSpamProtection();
@@ -74,12 +74,12 @@ class Registration_Controller extends ContentController
     }
 
     /**
-     * @param RegistrationForm $form
+     * @param ProfileForm $form
      * @param $data
      *
      * @return HTTPResponse|void
      */
-    public function processmember($data, RegistrationForm $form)
+    public function processmember($data, ProfileForm $form)
     {
         $member = Member::create();
         $form->saveInto($member);
