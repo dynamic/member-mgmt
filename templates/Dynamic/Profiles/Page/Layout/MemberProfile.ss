@@ -12,8 +12,8 @@
 			<% with $Profile %>
                 <h3 class="green">$FullName</h3>
                 <div>
-					<% if $ProfilePhoto %>
-                        <img src="$ProfilePhoto.URL" class="scale-with-grid half-bottom profile-image">
+					<% if $ProfileImage %>
+                        <img src="$ProfileImage.Fill(200,300).URL" class="scale-with-grid half-bottom profile-image">
 					<% else %>
                         <img src="resources/dynamic/silverstripe-member-profiles/images/default-profile.png" class="scale-with-grid half-bottom profile-image">
 					<% end_if %>
