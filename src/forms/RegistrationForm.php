@@ -3,24 +3,22 @@
 namespace Dynamic\Members\Form;
 
 use SilverStripe\Control\Controller;
-use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\Form;
 use SilverStripe\Security\Member;
 
 /**
- * Class RegistrationForm
+ * Class RegistrationForm.
  */
 class RegistrationForm extends Form
 {
-
     /**
      * RegistrationForm constructor.
+     *
      * @param Controller $controller
-     * @param string $name
+     * @param string     $name
      */
     public function __construct(Controller $controller, $name)
     {
-
         $member = Member::singleton();
 
         $fields = $member->getMemberFields();
@@ -38,5 +36,4 @@ class RegistrationForm extends Form
 
         $this->loadDataFrom($_REQUEST);
     }
-
 }

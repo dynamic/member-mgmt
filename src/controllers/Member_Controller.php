@@ -3,7 +3,7 @@
 namespace Dynamic\Members\Controller;
 
 /**
- * Class Member_Controller
+ * Class Member_Controller.
  */
 class Member_Controller extends \PageController
 {
@@ -40,17 +40,20 @@ class Member_Controller extends \PageController
         if (!$this->profile) {
             $this->setProfile();
         }
+
         return $this->profile;
     }
 
     /**
      * @param Member|null $member
+     *
      * @return $this
      */
     public function setProfile(Member $member = null)
     {
         if ($member !== null && $member instanceof Member) {
             $this->profile = $member;
+
             return $this;
         }
         if (!$this->profile) {
@@ -58,23 +61,24 @@ class Member_Controller extends \PageController
                 ? $this->request->latestParam('ProfileID')
                 : Member::currentUserID();
             $this->profile = Member::get()->byID($id);
+
             return $this;
         }
+
         return $this;
     }
 
     /**
      * @param SS_HTTPRequest $request
+     *
      * @return ViewableData_Customised|void
      */
     public function index(SS_HTTPRequest $request)
     {
-
         if (!$this->getProfile()) {
             $this->setProfile(Member::currentUser());
         }
         if ($member = $this->getProfile()) {
-
             return $this->renderWith(
                 array(
                     'ProfilePage',
@@ -88,11 +92,11 @@ class Member_Controller extends \PageController
         //ProfileErrorEmail::send_email(Member::currentUserID());
         //todo determine proper error handling
         return Security::permissionFailure($this, 'Please login to view your profile.');
-
     }
 
     /**
      * @param SS_HTTPRequest $request
+     *
      * @return ViewableData_Customised|void]
      */
     public function view(SS_HTTPRequest $request)
@@ -106,7 +110,6 @@ class Member_Controller extends \PageController
         }
 
         if ($profile = $this->getProfile()) {
-
             //redirect to /profile if they're trying to view their own
             //todo implement view public profile feature
             if ($profile->ID == Member::currentUserID()) {
@@ -119,19 +122,17 @@ class Member_Controller extends \PageController
                     'Page',
                 ),
                 array(
-                    'Profile' => $profile
+                    'Profile' => $profile,
                 )
             );
         }
 
         //ProfileErrorEmail::send_email(Member::currentUserID());
         return $this->httpError(404, "Your profile isn't available at this time. A our developers have been notified.");
-
     }
 
     public function update(SS_HTTPRequest $request)
     {
-
         if (!$this->getProfile()) {
             $this->setProfile(Member::currentUser());
         }
@@ -143,14 +144,13 @@ class Member_Controller extends \PageController
                 ),
                 array(
                     'Title' => 'Update your Profile',
-                    'Form' => $this->UpdateForm()->loadDataFrom($member)
+                    'Form' => $this->UpdateForm()->loadDataFrom($member),
                 )
             );
         }
         //ProfileErrorEmail::send_email(Member::currentUserID());
         //todo determine proper error handling
         return Security::permissionFailure($this, 'Please login to update your profile.');
-
     }
 
     /**
@@ -159,13 +159,14 @@ class Member_Controller extends \PageController
     public function UpdateForm()
     {
         $form = RegistrationForm::create($this, __FUNCTION__)
-            ->setFormAction(Controller::join_links('profile', __FUNCTION__ . '?debug_request'))
+            ->setFormAction(Controller::join_links('profile', __FUNCTION__.'?debug_request'))
             ->setValidator(singleton('Member')->getUpdateRequiredFields());
         if ($form->hasExtension('FormSpamProtectionExtension')) {
             $form->enableSpamProtection();
         }
         $fields = $form->Fields();
         $fields->dataFieldByName('Password')->setCanBeEmpty(true);
+
         return $form;
     }
 

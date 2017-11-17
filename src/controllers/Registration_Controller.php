@@ -13,11 +13,10 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 
 /**
- * Class Registration_Controller
+ * Class Registration_Controller.
  */
 class Registration_Controller extends ContentController
 {
-
     /**
      * @var array
      */
@@ -36,6 +35,7 @@ class Registration_Controller extends ContentController
 
     /**
      * @param HTTPRequest $request
+     *
      * @return DBHTMLText
      */
     public function index(HTTPRequest $request)
@@ -51,12 +51,12 @@ class Registration_Controller extends ContentController
                 array(
                     'Title' => 'Register',
                     'Content' => $content,
-                    'Form' => self::RegistrationForm()
+                    'Form' => self::RegistrationForm(),
                 )
             );
         }
 
-        return $this->redirect('/profile/update');;
+        return $this->redirect('/profile/update');
     }
 
     /**
@@ -69,12 +69,14 @@ class Registration_Controller extends ContentController
         if ($form->hasExtension('FormSpamProtectionExtension')) {
             $form->enableSpamProtection();
         }
+
         return $form;
     }
 
     /**
      * @param RegistrationForm $form
      * @param $data
+     *
      * @return HTTPResponse|void
      */
     public function processmember($data, RegistrationForm $form)
@@ -88,6 +90,7 @@ class Registration_Controller extends ContentController
             $groups = $member->Groups();
             $groups->add($public);
             $member->login();
+
             return $this->redirect('/profile');
         }
 
@@ -95,5 +98,4 @@ class Registration_Controller extends ContentController
         //todo figure out proper error handling
         return $this->httpError(404);
     }
-
 }
