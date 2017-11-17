@@ -110,7 +110,6 @@ class Member_Controller extends \PageController
         }
 
         if ($profile = $this->getProfile()) {
-
             //redirect to /profile if they're trying to view their own
             //todo implement view public profile feature
             if ($profile->ID == Member::currentUserID()) {

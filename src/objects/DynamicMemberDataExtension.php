@@ -68,7 +68,6 @@ class DynamicMemberDataExtension extends DataExtension
             EmailField::create('Email')
                 ->setTitle('Email'),
             ConfirmedPasswordField::create('Password'),
-                //->setTitle('')
             $image
         );
 
