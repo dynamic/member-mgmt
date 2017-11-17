@@ -4,5 +4,7 @@ After: framework/routes#coreroutes
 ---
 SilverStripe\Control\Director:
   rules:
-    'Registration_Controller//$Action/$ID/$Name': 'Dynamic\Members\Controller\Registration_Controller'
-    'register//$Action/$ID/$Name': 'Dynamic\Members\Controller\Registration_Controller'
+    'RegistrationController//$Action/$ID/$Name': 'Dynamic\Profiles\Controller\RegistrationController'
+    'register//$Action/$ID/$Name': 'Dynamic\Profiles\Controller\RegistrationController'
+    'ProfileController//$Action/$ID/$Name': 'Dynamic\Profiles\Controller\ProfileController'
+    'profile//$Action/$ID/$Name': 'Dynamic\Profiles\Controller\ProfileController'

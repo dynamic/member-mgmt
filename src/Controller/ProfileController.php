@@ -1,11 +1,19 @@
 <?php
 
-namespace Dynamic\Members\Controller;
+namespace Dynamic\Profiles\Controller;
+
+use Dynamic\Profiles\Form\ProfileForm;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
+use SilverStripe\SpamProtection\Extension\FormSpamProtectionExtension;
+use SilverStripe\View\ViewableData_Customised;
 
 /**
- * Class Member_Controller.
+ * Class Profile_Controller.
  */
-class Member_Controller extends \PageController
+class ProfileController extends \PageController
 {
     /**
      * @var array
@@ -56,10 +64,10 @@ class Member_Controller extends \PageController
 
             return $this;
         }
-        if (!$this->profile) {
+        if (!$this->profile && Security::getCurrentUser()) {
             $id = ($this->request->latestParam('ProfileID'))
                 ? $this->request->latestParam('ProfileID')
-                : Member::currentUserID();
+                : Security::getCurrentUser()->ID;
             $this->profile = Member::get()->byID($id);
 
             return $this;
@@ -69,14 +77,15 @@ class Member_Controller extends \PageController
     }
 
     /**
-     * @param SS_HTTPRequest $request
-     *
-     * @return ViewableData_Customised|void
+     * @param HTTPRequest $request
+     * @return \SilverStripe\Control\HTTPResponse|\SilverStripe\ORM\FieldType\DBHTMLText
      */
-    public function index(SS_HTTPRequest $request)
+    public function index(HTTPRequest $request)
     {
         if (!$this->getProfile()) {
-            $this->setProfile(Member::currentUser());
+            if ($member = Security::getCurrentUser()) {
+                $this->setProfile($member);
+            }
         }
         if ($member = $this->getProfile()) {
             return $this->renderWith(
@@ -85,6 +94,7 @@ class Member_Controller extends \PageController
                     'Page',
                 ),
                 array(
+                    'Title' => 'Your Profile',
                     'Profile' => $member,
                 )
             );
@@ -95,11 +105,11 @@ class Member_Controller extends \PageController
     }
 
     /**
-     * @param SS_HTTPRequest $request
+     * @param HTTPRequest $request
      *
      * @return ViewableData_Customised|void]
      */
-    public function view(SS_HTTPRequest $request)
+    public function view(HTTPRequest $request)
     {
         if (!$request->latestParam('ProfileID')) {
             return $this->httpError(404);
@@ -112,7 +122,7 @@ class Member_Controller extends \PageController
         if ($profile = $this->getProfile()) {
             //redirect to /profile if they're trying to view their own
             //todo implement view public profile feature
-            if ($profile->ID == Member::currentUserID()) {
+            if ($profile->ID == Security::getCurrentUser()->ID) {
                 $this->redirect('/profile');
             }
 
@@ -131,15 +141,15 @@ class Member_Controller extends \PageController
         return $this->httpError(404, "Your profile isn't available at this time. A our developers have been notified.");
     }
 
-    public function update(SS_HTTPRequest $request)
+    public function update(HTTPRequest $request)
     {
         if (!$this->getProfile()) {
-            $this->setProfile(Member::currentUser());
+            $this->setProfile(Security::getCurrentUser());
         }
         if ($member = $this->getProfile()) {
             return $this->renderWith(
                 array(
-                    'RegistrationPage',
+                    'ProfilePage_update',
                     'Page',
                 ),
                 array(
@@ -154,14 +164,14 @@ class Member_Controller extends \PageController
     }
 
     /**
-     * @return RegistrationForm
+     * @return ProfileForm
      */
     public function UpdateForm()
     {
-        $form = RegistrationForm::create($this, __FUNCTION__)
-            ->setFormAction(Controller::join_links('profile', __FUNCTION__.'?debug_request'))
-            ->setValidator(singleton('Member')->getUpdateRequiredFields());
-        if ($form->hasExtension('FormSpamProtectionExtension')) {
+        $form = ProfileForm::create($this, __FUNCTION__)
+            ->setFormAction(Controller::join_links('profile', __FUNCTION__))
+            ->setValidator(Member::singleton()->getUpdateRequiredFields());
+        if ($form->hasExtension(FormSpamProtectionExtension::class)) {
             $form->enableSpamProtection();
         }
         $fields = $form->Fields();
@@ -172,9 +182,9 @@ class Member_Controller extends \PageController
 
     /**
      * @param $data
-     * @param RegistrationForm $form
+     * @param ProfileForm $form
      */
-    public function processmember($data, RegistrationForm $form)
+    public function processmember($data, ProfileForm $form)
     {
         $member = Member::get()->byID($this->getProfile()->ID);
         $form->saveInto($member);
