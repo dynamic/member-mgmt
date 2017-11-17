@@ -1,0 +1,5 @@
+SilverStripe\Security\Member:
+  default:
+    FirstName: "George"
+    Surname: "Costanza"
+    Email: "george@costanza.com"
