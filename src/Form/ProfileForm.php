@@ -22,13 +22,10 @@ class ProfileForm extends Form
         $member = Member::singleton();
 
         $fields = $member->getProfileFields();
-        $this->extend('updateProfileFields', $fields);
 
         $actions = $member->getProfileActions();
-        $this->extend('updateProfileActions', $actions);
 
         $validator = $member->getProfileRequiredFields();
-        $this->extend('updateProfileRequiredFields', $validator);
 
         parent::__construct($controller, $name, $fields, $actions, $validator);
 

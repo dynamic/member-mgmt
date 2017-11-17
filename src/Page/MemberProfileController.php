@@ -3,8 +3,12 @@
 namespace Dynamic\Profiles\Page;
 
 use Dynamic\Profiles\Form\ProfileForm;
+use SilverStripe\Assets\FileNameFilter;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Dev\Debug;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
@@ -121,7 +125,26 @@ class MemberProfileController extends \PageController
         if ($member = $this->getProfile()) {
             $form = $this->ProfileForm();
             $fields = $form->Fields();
-            $fields->dataFieldByName('Password')->setCanBeEmpty(true);
+
+            $fields->push(HiddenField::create('ID')->setValue($member->ID));
+
+            $password = $fields->dataFieldByName('Password');
+            $password->setCanBeEmpty(true);
+
+            if ($member->ProfileImage()->exists()) {
+                $src = ' src="' . $member->ProfileImage()->CMSThumbnail()->URL . '"';
+            } else {
+                $src = '';
+            }
+            $fields->insertBefore(
+                LiteralField::create(
+                    'ProfileImgPrev',
+                    '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"'
+                        . $src . ' ></div>'
+                ),
+                'ProfileImage'
+            );
+
             return $this->customise(
                 array(
                     'Title' => 'Update your Profile',
@@ -176,8 +199,25 @@ class MemberProfileController extends \PageController
      */
     public function processmember($data, ProfileForm $form)
     {
-        $member = Member::create();
+        if (!$member = Member::get()->byID($this->getProfile()->ID)) {
+            $member = Member::create();
+        }
+
+        $existingProfileImage = $member->ProfileImage();
+        $filter = FileNameFilter::create();
+        if (isset($data['ProfileImage']) && !empty($data['ProfileImage']['name'])) {
+            $newName = $filter->filter($data['ProfileImage']['name']);
+            if ($existingProfileImage->exists() && $existingProfileImage->Name != $newName) {
+                $existingProfileImage->delete();
+            }
+        } else {
+            unset($data['ProfileImage']);
+            $form->Fields()->removeByName('ProfileImage');
+        }
+
         $form->saveInto($member);
+        $member->write();
+
         $public = Group::get()
             ->filter(array('Code' => 'public'))
             ->first();
@@ -185,12 +225,8 @@ class MemberProfileController extends \PageController
             $groups = $member->Groups();
             $groups->add($public);
             $member->login();
-
-            return $this->redirect($this->Link());
         }
 
-        //RegistrationErrorEmail::send_email(Member::currentUserID());
-        //todo figure out proper error handling
-        return $this->httpError(404);
+        return $this->redirect($this->Link());
     }
 }

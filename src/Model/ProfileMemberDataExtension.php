@@ -9,8 +9,8 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\ConfirmedPasswordField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\FileField;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\DataExtension;
@@ -32,8 +32,15 @@ class ProfileMemberDataExtension extends DataExtension
      * @var array
      */
     private static $has_one = array(
-        'ProfilePicture' => Image::class,
+        'ProfileImage' => Image::class,
     );
+
+    /**
+     * @var array
+     */
+    private static $owns = [
+        'ProfileImage'
+    ];
 
     /**
      * @var
@@ -50,8 +57,8 @@ class ProfileMemberDataExtension extends DataExtension
      */
     public function getProfileFields()
     {
-        $image = UploadField::create('ProfilePictureID', 'Profile Picture')
-            ->setFolderName('Uploads/Profile-Pictures')
+        $image = FileField::create('ProfileImage', 'Profile Photo')
+            ->setFolderName('Uploads/ProfileImages')
         ;
 
         $fields = FieldList::create(
@@ -64,10 +71,6 @@ class ProfileMemberDataExtension extends DataExtension
             EmailField::create('Email')
                 ->setTitle('Email'),
             ConfirmedPasswordField::create('Password'),
-            LiteralField::create(
-                'ImagePreview',
-                '<p><img src="$ProfileImage.CMSThumbnail.URL"></p>'
-            ),
             $image
         );
 
@@ -81,10 +84,14 @@ class ProfileMemberDataExtension extends DataExtension
      */
     public function getProfileActions()
     {
-        return FieldList::create(
+        $actions = FieldList::create(
             FormAction::create('processmember')
-                ->setTitle('Sign Up')
+                ->setTitle('Submit')
         );
+
+        $this->owner->extend('updateProfileActions', $actions);
+
+        return $actions;
     }
 
     /**
@@ -92,12 +99,16 @@ class ProfileMemberDataExtension extends DataExtension
      */
     public function getProfileRequiredFields()
     {
-        return RequiredFields::create(
+        $validator = RequiredFields::create(
             'FirstName',
             'Surname',
             'Email',
             'Password'
         );
+
+        $this->owner->extend('updateProfileRequiredFields', $validator);
+
+        return $validator;
     }
 
     /**
@@ -165,8 +176,8 @@ class ProfileMemberDataExtension extends DataExtension
      */
     public function onAfterWrite()
     {
-        if ($this->owner->ProfilePictureID != 0) {
-            if ($image = File::get()->byID($this->owner->ProfilePictureID)) {
+        if ($this->owner->ProfileImageID != 0) {
+            if ($image = File::get()->byID($this->owner->ProfileImageID)) {
                 $image->OwnerID = $this->owner->ID;
                 $image->ShowInSearch = false;
                 $image->write();
@@ -191,7 +202,6 @@ class ProfileMemberDataExtension extends DataExtension
             $publicGroup->Title = 'Public';
             $publicGroup->Code = 'public';
             $publicGroup->write();
-            //$publicGroup->Roles()->add($advisorRole);
         }
 
         parent::requireDefaultRecords();
