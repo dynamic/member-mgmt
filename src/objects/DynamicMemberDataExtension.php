@@ -16,11 +16,10 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Group;
 
 /**
- * Class VenuMember
+ * Class VenuMember.
  */
 class DynamicMemberDataExtension extends DataExtension
 {
-
     /**
      * @var array
      */
@@ -50,7 +49,6 @@ class DynamicMemberDataExtension extends DataExtension
      */
     public function getMemberFields()
     {
-
         $image = UploadField::create('ProfilePictureID', 'Profile Picture')
             //->setAcceptedFiles(array('.gif', '.jpg', '.jpeg', '.png'))
             //->setView('grid')
@@ -90,7 +88,6 @@ class DynamicMemberDataExtension extends DataExtension
         );
     }
 
-
     /**
      * @return RequiredFields
      */
@@ -121,7 +118,8 @@ class DynamicMemberDataExtension extends DataExtension
      */
     public function setFullName()
     {
-        $this->full_name = $this->owner->FirstName . ' ' . $this->owner->Surname;
+        $this->full_name = $this->owner->FirstName.' '.$this->owner->Surname;
+
         return $this;
     }
 
@@ -133,18 +131,21 @@ class DynamicMemberDataExtension extends DataExtension
         if (!$this->full_name) {
             $this->setFullName();
         }
+
         return $this->full_name;
     }
 
     /**
      * @param int|null $size
+     *
      * @return $this
      */
     public function setMaxProfileImageSize($size = null)
     {
-        $this->max_profile_image_size = ((int)$size === $size)
+        $this->max_profile_image_size = ((int) $size === $size)
             ? $size
             : $this->owner->config()->get('max_profile_image_size');
+
         return $this;
     }
 
@@ -156,6 +157,7 @@ class DynamicMemberDataExtension extends DataExtension
         if (!$this->max_profile_image_size) {
             $this->setMaxProfileImageSize();
         }
+
         return $this->max_profile_image_size;
     }
 
@@ -164,7 +166,6 @@ class DynamicMemberDataExtension extends DataExtension
      */
     public function onAfterWrite()
     {
-
         if ($this->owner->ProfilePictureID != 0) {
             if ($image = File::get()->byID($this->owner->ProfilePictureID)) {
                 $image->OwnerID = $this->owner->ID;
@@ -196,5 +197,4 @@ class DynamicMemberDataExtension extends DataExtension
 
         parent::requireDefaultRecords();
     }
-
 }
