@@ -227,6 +227,8 @@ class MemberProfileController extends \PageController
             $member->login();
         }
 
+        $this->extend('updateProcessmember', $member);
+
         return $this->redirect($this->Link());
     }
 }
