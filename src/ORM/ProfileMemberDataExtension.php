@@ -124,13 +124,13 @@ class ProfileMemberDataExtension extends DataExtension
     }
 
     /**
-     * @return $this
+     * @return \SilverStripe\ORM\DataObject
      */
     public function setFullName()
     {
         $this->full_name = $this->owner->FirstName.' '.$this->owner->Surname;
 
-        return $this;
+        return $this->owner;
     }
 
     /**
@@ -146,9 +146,9 @@ class ProfileMemberDataExtension extends DataExtension
     }
 
     /**
-     * @param int|null $size
+     * @param null $size
      *
-     * @return $this
+     * @return \SilverStripe\ORM\DataObject
      */
     public function setMaxProfileImageSize($size = null)
     {
@@ -156,7 +156,7 @@ class ProfileMemberDataExtension extends DataExtension
             ? $size
             : $this->owner->config()->get('max_profile_image_size');
 
-        return $this;
+        return $this->owner;
     }
 
     /**

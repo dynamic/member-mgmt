@@ -3,3 +3,18 @@ SilverStripe\Security\Member:
     FirstName: "George"
     Surname: "Costanza"
     Email: "george@costanza.com"
+  other:
+    FirstName: "Luigi"
+    Surname: "Vercotti"
+    Email: "Luigi.Vercotti@gmail.com"
+
+SilverStripe\Assets\File:
+  File:
+    FileFilename: FileTest.png
+    FileHash: 55b443b60176235ef09801153cca4e6da7494a0c
+    Name: FileTest.png
+    URL: 'FileTest.png'
+
+Dynamic\Profiles\Page\MemberProfile:
+  page:
+    Title: 'Page'
