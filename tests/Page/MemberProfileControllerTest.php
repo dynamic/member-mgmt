@@ -7,10 +7,12 @@ use Dynamic\Profiles\Page\MemberProfile;
 use Dynamic\Profiles\Page\MemberProfileController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
+use SilverStripe\View\SSViewer;
 
 /**
  * Class MemberProfileControllerTest
@@ -93,6 +95,7 @@ class MemberProfileControllerTest extends FunctionalTest
      */
     public function testView()
     {
+        Config::modify()->set(SSViewer::class, 'theme', "simple");
         $this->autoFollowRedirection = false;
 
         /** @var MemberProfile $profilePage */
