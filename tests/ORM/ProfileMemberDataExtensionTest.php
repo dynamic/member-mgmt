@@ -65,7 +65,7 @@ class ProfileMemberDataExtensionTest extends SapphireTest
     public function testGetFullName()
     {
         $object = $this->objFromFixture(Member::class, 'default');
-        $this->assertEquals($object->FirstName . ' ' . $object->Surname, $object->getFullName());
+        $this->assertEquals($object->FirstName.' '.$object->Surname, $object->getFullName());
     }
 
     /**
