@@ -214,12 +214,13 @@ class MemberProfileController extends \PageController
         $form->saveInto($member);
         $member->write();
 
-        $public = Group::get()
+        if ($public = Group::get()
             ->filter(array('Code' => 'public'))
-            ->first();
-
-        $groups = $member->Groups();
-        $groups->add($public);
+            ->first()
+        ) {
+            $groups = $member->Groups();
+            $groups->add($public);
+        }
 
         $this->extend('updateProcessmember', $member);
 
