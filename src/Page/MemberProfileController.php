@@ -196,7 +196,7 @@ class MemberProfileController extends \PageController
      */
     public function processmember($data, ProfileForm $form)
     {
-        if (!$member = Member::get()->byID($this->getProfile()->ID)) {
+        if (!Security::getCurrentUser() || !$member = Member::get()->byID($this->getProfile()->ID)) {
             $member = Member::create();
         }
 
@@ -218,13 +218,13 @@ class MemberProfileController extends \PageController
         $public = Group::get()
             ->filter(array('Code' => 'public'))
             ->first();
-        if ($member->write()) {
-            $groups = $member->Groups();
-            $groups->add($public);
-            $member->login();
-        }
+
+        $groups = $member->Groups();
+        $groups->add($public);
 
         $this->extend('updateProcessmember', $member);
+
+        Security::setCurrentUser($member);
 
         return $this->redirect($this->Link());
     }
