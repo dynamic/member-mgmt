@@ -2,7 +2,6 @@
 
 namespace Dynamic\Profiles\ORM;
 
-use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\CheckboxField;
@@ -39,7 +38,7 @@ class ProfileMemberDataExtension extends DataExtension
      * @var array
      */
     private static $owns = [
-        'ProfileImage'
+        'ProfileImage',
     ];
 
     /**
@@ -74,7 +73,7 @@ class ProfileMemberDataExtension extends DataExtension
             $image
         );
 
-        $this->owner->extend("updateProfileFields", $fields);
+        $this->owner->extend('updateProfileFields', $fields);
 
         return $fields;
     }

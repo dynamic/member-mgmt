@@ -6,7 +6,6 @@ use Dynamic\Profiles\Form\ProfileForm;
 use SilverStripe\Assets\FileNameFilter;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
@@ -76,7 +75,7 @@ class MemberProfileController extends \PageController
     public function index(HTTPRequest $request)
     {
         if (!$member = Security::getCurrentUser()) {
-            return $this->redirect($this->Link() . 'register/');
+            return $this->redirect($this->Link().'register/');
         } else {
             return $this;
         }
@@ -127,7 +126,7 @@ class MemberProfileController extends \PageController
             $password->setCanBeEmpty(true);
 
             if ($member->ProfileImage()->exists()) {
-                $src = ' src="' . $member->ProfileImage()->CMSThumbnail()->URL . '"';
+                $src = ' src="'.$member->ProfileImage()->CMSThumbnail()->URL.'"';
             } else {
                 $src = '';
             }
@@ -135,7 +134,7 @@ class MemberProfileController extends \PageController
                 LiteralField::create(
                     'ProfileImgPrev',
                     '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"'
-                    . $src . ' ></div>'
+                    .$src.' ></div>'
                 ),
                 'ProfileImage'
             );

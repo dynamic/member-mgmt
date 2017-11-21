@@ -15,12 +15,10 @@ use SilverStripe\Security\Security;
 use SilverStripe\View\SSViewer;
 
 /**
- * Class MemberProfileControllerTest
- * @package Dynamic\Profiles\Test\Page
+ * Class MemberProfileControllerTest.
  */
 class MemberProfileControllerTest extends FunctionalTest
 {
-
     /**
      * @var array
      */
@@ -38,7 +36,7 @@ class MemberProfileControllerTest extends FunctionalTest
      */
     public function testGetProfile()
     {
-        /** @var MemberProfile $object */
+        /* @var MemberProfile $object */
         $page = Injector::inst()->create(MemberProfile::class);
         $controller = MemberProfileController::create($page);
 
@@ -59,7 +57,7 @@ class MemberProfileControllerTest extends FunctionalTest
     {
         /** @var Member $member */
         $member = $this->objFromFixture(Member::class, 'default');
-        /** @var MemberProfile $object */
+        /* @var MemberProfile $object */
         $page = Injector::inst()->create(MemberProfile::class);
         $controller = MemberProfileController::create($page);
 
@@ -95,7 +93,7 @@ class MemberProfileControllerTest extends FunctionalTest
      */
     public function testView()
     {
-        Config::modify()->set(SSViewer::class, 'theme', "simple");
+        Config::modify()->set(SSViewer::class, 'theme', 'simple');
         $this->autoFollowRedirection = false;
 
         /** @var MemberProfile $profilePage */
@@ -151,7 +149,7 @@ class MemberProfileControllerTest extends FunctionalTest
         $this->assertInstanceOf(HTTPResponse::class, $page);
         $this->assertEquals(200, $page->getStatusCode());
         $this->assertContains(
-            '<input type="hidden" name="ID" value="' . $member->ID . '" class="hidden" id="ID" />',
+            '<input type="hidden" name="ID" value="'.$member->ID.'" class="hidden" id="ID" />',
             $page->getBody()
         );
     }
