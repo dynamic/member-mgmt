@@ -57,8 +57,8 @@ class MemberProfileController extends \PageController
             return $this;
         }
         if (!$this->profile && Security::getCurrentUser()) {
-            $id = ($this->request->latestParam('ProfileID'))
-                ? $this->request->latestParam('ProfileID')
+            $id = ($this->request->latestParam('ID'))
+                ? $this->request->latestParam('ID')
                 : Security::getCurrentUser()->ID;
             $this->profile = Member::get()->byID($id);
 
@@ -70,6 +70,7 @@ class MemberProfileController extends \PageController
 
     /**
      * @param HTTPRequest $request
+     *
      * @return $this|\SilverStripe\Control\HTTPResponse
      */
     public function index(HTTPRequest $request)
@@ -83,16 +84,13 @@ class MemberProfileController extends \PageController
 
     /**
      * @param HTTPRequest $request
+     *
      * @return \SilverStripe\ORM\FieldType\DBHTMLText
      */
     public function view(HTTPRequest $request)
     {
         if (!$request->latestParam('ID')) {
             return $this->httpError(404);
-        }
-
-        if (!$this->getProfile()) {
-            $this->setProfile();
         }
 
         if ($profile = $this->getProfile()) {
@@ -119,9 +117,6 @@ class MemberProfileController extends \PageController
 
     public function update(HTTPRequest $request)
     {
-        if (!$this->getProfile()) {
-            $this->setProfile(Security::getCurrentUser());
-        }
         if ($member = $this->getProfile()) {
             $form = $this->ProfileForm();
             $fields = $form->Fields();
@@ -140,7 +135,7 @@ class MemberProfileController extends \PageController
                 LiteralField::create(
                     'ProfileImgPrev',
                     '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"'
-                        . $src . ' ></div>'
+                    . $src . ' ></div>'
                 ),
                 'ProfileImage'
             );
@@ -159,6 +154,7 @@ class MemberProfileController extends \PageController
 
     /**
      * @param HTTPRequest $request
+     *
      * @return \SilverStripe\Control\HTTPResponse|\SilverStripe\View\ViewableData_Customised
      */
     public function register(HTTPRequest $request)
@@ -195,6 +191,7 @@ class MemberProfileController extends \PageController
     /**
      * @param $data
      * @param ProfileForm $form
+     *
      * @return \SilverStripe\Control\HTTPResponse
      */
     public function processmember($data, ProfileForm $form)

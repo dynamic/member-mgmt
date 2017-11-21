@@ -1,6 +1,6 @@
 <?php
 
-namespace Dynamic\Members\Test;
+namespace Dynamic\Members\Test\Form;
 
 use SilverStripe\Dev\SapphireTest;
 
