@@ -6,11 +6,14 @@ use Dynamic\Profiles\Form\ProfileForm;
 use SilverStripe\Assets\FileNameFilter;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\ORM\FieldType\DBField;
 use SilverStripe\Security\Group;
+use SilverStripe\Security\IdentityStore;
 use SilverStripe\Security\Member;
+
 use SilverStripe\Security\Security;
 
 class MemberProfileController extends \PageController
@@ -18,13 +21,13 @@ class MemberProfileController extends \PageController
     /**
      * @var array
      */
-    private static $allowed_actions = array(
+    private static $allowed_actions = [
         'index',
         'view',
         'update',
         'register',
         'ProfileForm',
-    );
+    ];
 
     /**
      * @var
@@ -75,7 +78,7 @@ class MemberProfileController extends \PageController
     public function index(HTTPRequest $request)
     {
         if (!$member = Security::getCurrentUser()) {
-            return $this->redirect($this->Link().'register/');
+            return $this->redirect($this->Link() . 'register/');
         } else {
             return $this;
         }
@@ -85,6 +88,7 @@ class MemberProfileController extends \PageController
      * @param HTTPRequest $request
      *
      * @return \SilverStripe\ORM\FieldType\DBHTMLText
+     * @throws \SilverStripe\Control\HTTPResponse_Exception
      */
     public function view(HTTPRequest $request)
     {
@@ -100,13 +104,13 @@ class MemberProfileController extends \PageController
             }
 
             return $this->renderWith(
-                array(
+                [
                     'ProfilePage',
                     'Page',
-                ),
-                array(
+                ],
+                [
                     'Profile' => $profile,
-                )
+                ]
             );
         }
 
@@ -126,7 +130,7 @@ class MemberProfileController extends \PageController
             $password->setCanBeEmpty(true);
 
             if ($member->ProfileImage()->exists()) {
-                $src = ' src="'.$member->ProfileImage()->CMSThumbnail()->URL.'"';
+                $src = ' src="' . $member->ProfileImage()->CMSThumbnail()->URL . '"';
             } else {
                 $src = '';
             }
@@ -134,16 +138,16 @@ class MemberProfileController extends \PageController
                 LiteralField::create(
                     'ProfileImgPrev',
                     '<div id="img-confirm-holder" style="width: 100px;"><img id="img-confirm" class="scale-with-grid"'
-                    .$src.' ></div>'
+                    . $src . ' ></div>'
                 ),
                 'ProfileImage'
             );
 
             return $this->customise(
-                array(
+                [
                     'Title' => 'Update your Profile',
                     'Form' => $form->loadDataFrom($member),
-                )
+                ]
             );
         }
         //ProfileErrorEmail::send_email(Member::currentUserID());
@@ -162,11 +166,11 @@ class MemberProfileController extends \PageController
             $content = DBField::create_field('HTMLText', '<p>Create a profile.</p>');
 
             return $this->customise(
-                array(
+                [
                     'Title' => 'Sign Up',
                     'Content' => $content,
                     'Form' => self::ProfileForm(),
-                )
+                ]
             );
         }
 
@@ -192,12 +196,18 @@ class MemberProfileController extends \PageController
      * @param ProfileForm $form
      *
      * @return \SilverStripe\Control\HTTPResponse
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws \SilverStripe\ORM\ValidationException
      */
     public function processmember($data, ProfileForm $form)
     {
         if (!Security::getCurrentUser() || !$member = Member::get()->byID($this->getProfile()->ID)) {
             $member = Member::create();
         }
+
+        $data['Password'] = $data['Password']['_Password'];
+
+        $request = $this->getRequest();
 
         $existingProfileImage = $member->ProfileImage();
         $filter = FileNameFilter::create();
@@ -215,7 +225,7 @@ class MemberProfileController extends \PageController
         $member->write();
 
         if ($public = Group::get()
-            ->filter(array('Code' => 'public'))
+            ->filter(['Code' => 'public'])
             ->first()
         ) {
             $groups = $member->Groups();
@@ -224,7 +234,10 @@ class MemberProfileController extends \PageController
 
         $this->extend('updateProcessmember', $member);
 
-        Security::setCurrentUser($member);
+        $identityStore = Injector::inst()->get(IdentityStore::class);
+        $rememberMe = (isset($data['Remember']) && Security::config()->get('autologin_enabled'));
+
+        $identityStore->logIn($member, $rememberMe, $request);
 
         return $this->redirect($this->Link());
     }
