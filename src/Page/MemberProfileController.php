@@ -122,8 +122,10 @@ class MemberProfileController extends \PageController
 
             $fields->push(HiddenField::create('ID')->setValue($member->ID));
 
-            $password = $fields->dataFieldByName('Password');
-            $password->setCanBeEmpty(true);
+
+
+            $fields->replaceField('Password', Security::getCurrentUser()->getMemberPasswordField());
+            //$password->setCanBeEmpty(true);
 
             if ($member->ProfileImage()->exists()) {
                 $src = ' src="'.$member->ProfileImage()->CMSThumbnail()->URL.'"';
