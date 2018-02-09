@@ -1,8 +1,50 @@
+SilverStripe\Security\Group:
+  administrators:
+    Title: "Administrators"
+  site-owners:
+    Title: "Site Owners"
+
+SilverStripe\Security\Permission:
+  administrators:
+    Code: ADMIN
+    Type: 1
+    Group: =>SilverStripe\Security\Group.administrators
+  profile_create:
+    Code: Create_MemberProfile
+    Type: 1
+    Group: =>SilverStripe\Security\Group.site-owners
+  profile_edit:
+    Code: Edit_MemberProfile
+    Type: 1
+    Group: =>SilverStripe\Security\Group.site-owners
+  profile_delete:
+    Code: Delete_MemberProfile
+    Type: 1
+    Group: =>SilverStripe\Security\Group.site-owners
+  profile_publish:
+    Code: Publish_MemberProfile
+    Type: 1
+    Group: =>SilverStripe\Security\Group.site-owners
+
+
 SilverStripe\Security\Member:
+  admin:
+    FirstName: "Default"
+    Surname: "Admin"
+    Email: "defaultadmin"
+    Password: "dev"
+    Groups: =>SilverStripe\Security\Group.administrators
+  site-owner:
+    FirstName: "Site"
+    Surname: "Owner"
+    Email: "owner"
+    Password: "owner"
+    Groups: =>SilverStripe\Security\Group.site-owners
   default:
     FirstName: "George"
     Surname: "Costanza"
     Email: "george@costanza.com"
+    Groups: =>SilverStripe\Security\Group.administrators
   other:
     FirstName: "Luigi"
     Surname: "Vercotti"
